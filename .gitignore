@@ -1,3 +1,4 @@
-sources
+sources/*
+!sources/.gitkeep
 tmp
 output
