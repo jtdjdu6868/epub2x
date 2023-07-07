@@ -59,3 +59,8 @@ if __name__ == '__main__':
         for output in output_list:
             os.rename(os.path.join(output_dir, output), os.path.join(img_path, output.split('-', 1)[1]))
         os.rmdir(output_dir)
+
+        # compress
+        os.makedirs(DEST_PATH, exist_ok=True)
+        shutil.make_archive(os.path.join(DEST_PATH, epub), 'zip', epub_dir)
+        os.rename(os.path.join(DEST_PATH, epub + '.zip'), os.path.join(DEST_PATH, epub))
