@@ -3,6 +3,7 @@ import shutil
 import zipfile
 import json
 import base64
+from FCA.Adapter import Adapter
 
 GPUID = 0
 MODEL = 'RealESRGAN-anime'
@@ -31,6 +32,16 @@ def map2orig_filename(output_filename, img_list):
     return output_filename.split('-', 1)[1]
 
 if __name__ == '__main__':
+    json_data = {
+        'gpuid': GPUID,
+        'model': MODEL,
+        'modelscale': SCALE,
+        'modelnoise': NOISE,
+        'targetscale': TARGET_SCALE,
+        'tta': False
+    }
+    adapter = Adapter(json_data)
+    
     if os.path.exists(TMP_PATH):
         shutil.rmtree(TMP_PATH)
     epub_list = [f for f in os.listdir(SRC_PATH) if (os.path.isfile(os.path.join(SRC_PATH, f)) and f.endswith('.epub'))]
@@ -40,33 +51,12 @@ if __name__ == '__main__':
 
         # 2x it
         img_path = os.path.join(epub_dir, 'EPUB', 'images')
-        img_list = [os.path.join(img_path, f) for f in os.listdir(img_path)]
-        json_data = {
-            'gpuid': GPUID,
-            'inputpath': img_list,
-            'model': MODEL,
-            'modelscale': SCALE,
-            'modelnoise': NOISE,
-            'outputpath': img_path,
-            'targetscale': TARGET_SCALE,
-            'tta': False
-        }
-        json_str = json.dumps(json_data)
-        json_base64 = base64.b64encode(json_str.encode('utf-8')).decode('utf-8')
+        img_list = os.listdir(img_path)
 
-        os.system(f'final2x-core -b {json_base64}')
+        for src_img in img_list:
+            src_img_path = os.path.join(img_path, src_img)
+            adapter.queue(src_img_path, src_img_path)
 
-        # delete all orig img_list
-        for img in img_list:
-            os.remove(img)
-        
-        # copy output to original dir
-        output_dir = os.path.join(img_path, 'outputs')
-        output_list = [f for f in os.listdir(output_dir)]
-        for output in output_list:
-            orig_filename = map2orig_filename(output, img_list)
-            os.rename(os.path.join(output_dir, output), orig_filename)
-        os.rmdir(output_dir)
 
         # compress
         os.makedirs(DEST_PATH, exist_ok=True)
