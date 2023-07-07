@@ -24,6 +24,11 @@ def decompress(src_filename, src_path, dest_path):
         zip_ref.extractall(epub_dir)
     return epub_dir
 
+def map2orig_filename(output_filename, img_list):
+    for img in img_list:
+        if os.path.splitext(img)[0].endswith(os.path.splitext(output_filename.split('-', 1)[1])[0]):
+            return img
+    return output_filename.split('-', 1)[1]
 
 if __name__ == '__main__':
     epub_list = [f for f in os.listdir(SRC_PATH) if (os.path.isfile(os.path.join(SRC_PATH, f)) and f.endswith('.epub'))]
@@ -32,7 +37,7 @@ if __name__ == '__main__':
         epub_dir = decompress(epub, SRC_PATH, TMP_PATH)
 
         # 2x it
-        img_path = os.path.join(epub_dir, 'images')
+        img_path = os.path.join(epub_dir, 'EPUB', 'images')
         img_list = [os.path.join(img_path, f) for f in os.listdir(img_path)]
         json_data = {
             'gpuid': GPUID,
@@ -57,7 +62,8 @@ if __name__ == '__main__':
         output_dir = os.path.join(img_path, 'outputs')
         output_list = [f for f in os.listdir(output_dir)]
         for output in output_list:
-            os.rename(os.path.join(output_dir, output), os.path.join(img_path, output.split('-', 1)[1]))
+            orig_filename = map2orig_filename(output, img_list)
+            os.rename(os.path.join(output_dir, output), orig_filename)
         os.rmdir(output_dir)
 
         # compress
