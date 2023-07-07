@@ -1,0 +1,3 @@
+[submodule "FCA"]
+	path = FCA
+	url = git@github.com:jtdjdu6868/final2x-core-adapter-py.git
