@@ -50,12 +50,15 @@ if __name__ == '__main__':
         epub_dir = decompress(epub, SRC_PATH, TMP_PATH)
 
         # 2x it
-        img_path = os.path.join(epub_dir, 'EPUB', 'images')
-        img_list = os.listdir(img_path)
-
-        for src_img in img_list:
-            src_img_path = os.path.join(img_path, src_img)
-            adapter.queue(src_img_path, src_img_path)
+        # walk through all folder called 'images' under epub_dir
+        for root, dirs, files in os.walk(epub_dir):
+            if os.path.basename(root) == 'images':
+                print(f'Found images folder: {root}')
+                for src_img in files:
+                    src_img_path = os.path.join(root, src_img)
+                    print(src_img_path)
+                    adapter.queue(src_img_path, src_img_path)
+            
 
 
         # compress
