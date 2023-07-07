@@ -32,7 +32,7 @@ if __name__ == '__main__':
         epub_dir = decompress(epub, SRC_PATH, TMP_PATH)
 
         # 2x it
-        img_path = os.path.join(epub_dir, 'EPUB', 'images')
+        img_path = os.path.join(epub_dir, 'images')
         img_list = [os.path.join(img_path, f) for f in os.listdir(img_path)]
         json_data = {
             'gpuid': GPUID,
