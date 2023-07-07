@@ -31,6 +31,8 @@ def map2orig_filename(output_filename, img_list):
     return output_filename.split('-', 1)[1]
 
 if __name__ == '__main__':
+    if os.path.exists(TMP_PATH):
+        shutil.rmtree(TMP_PATH)
     epub_list = [f for f in os.listdir(SRC_PATH) if (os.path.isfile(os.path.join(SRC_PATH, f)) and f.endswith('.epub'))]
     for epub in epub_list:
         # decompress
@@ -69,4 +71,6 @@ if __name__ == '__main__':
         # compress
         os.makedirs(DEST_PATH, exist_ok=True)
         shutil.make_archive(os.path.join(DEST_PATH, epub), 'zip', epub_dir)
+        if os.path.exists(os.path.join(DEST_PATH, epub)):
+            os.remove(os.path.join(DEST_PATH, epub))
         os.rename(os.path.join(DEST_PATH, epub + '.zip'), os.path.join(DEST_PATH, epub))
