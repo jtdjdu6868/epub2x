@@ -1,8 +1,6 @@
 import os
 import shutil
 import zipfile
-import json
-import base64
 from FCA.Adapter import Adapter
 
 GPUID = 0
@@ -25,14 +23,8 @@ def decompress(src_filename, src_path, dest_path):
         zip_ref.extractall(epub_dir)
     return epub_dir
 
-def map2orig_filename(output_filename, img_list):
-    for img in img_list:
-        if os.path.splitext(img)[0].endswith(os.path.splitext(output_filename.split('-', 1)[1])[0]):
-            return img
-    return output_filename.split('-', 1)[1]
-
 if __name__ == '__main__':
-    json_data = {
+    final2x_config = {
         'gpuid': GPUID,
         'model': MODEL,
         'modelscale': SCALE,
@@ -40,7 +32,7 @@ if __name__ == '__main__':
         'targetscale': TARGET_SCALE,
         'tta': False
     }
-    adapter = Adapter(json_data)
+    adapter = Adapter(final2x_config)
     
     if os.path.exists(TMP_PATH):
         shutil.rmtree(TMP_PATH)
